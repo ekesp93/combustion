@@ -1,0 +1,17 @@
+Initializing mission control server on port 22500
+SoundManager: Connected to server, will send messages to 127.0.0.1 on port 57120
+Engine: Checking if sound server is ready at 127.0.0.1 on port 57120... (Waiting for 5 seconds)
+Engine: Failed to start sound server. Sound disabled.
+SoundManager::setup: Display radius: 10000
+Running default_init.py
+Running system/quickCommands.py
+Attemped to loaded buffer ID 10, but not connected to a sound server!
+Attemped to loaded buffer ID 11, but not connected to a sound server!
+Attemped to loaded buffer ID 12, but not connected to a sound server!
+Attemped to loaded buffer ID 13, but not connected to a sound server!
+
+>> omegalib 6.6
+>> to get a list of quick commands type ':?'
+Running loader.py
+[BinaryPointsLoader] Total Points: <109024>   Points per batch: <10000>   Batch length(%): <9>
+!!! SceneNode::getBoundCenter: non-finite bounds for scene node Unnamed_2
