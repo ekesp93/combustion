@@ -45,7 +45,6 @@ for x in range(1, 960450):
         points[x - 68614].temp = float(parsed[6])
     elif x > 891848 and x < 960449:
         parsed = temp.split(" ")
-        print parsed
         k = 0
         for y in range(0, len(parsed)):
             if parsed[y] != '':
