@@ -34,6 +34,7 @@ import time
 file = open(filename, 'wb')
 fileread = open("particle00027.vtk", 'r')
 points = []
+maxTemp = 0
 
 for x in range(1, 960450):
     temp = fileread.readline()
@@ -56,12 +57,15 @@ for x in range(1, 960450):
                     points[x - 891849].velz = float(parsed[y])
                 k += 1
 
-def generatePoint(x, y, z):
+for x in range(0, len(points)):
+    if points[x].temp > maxTemp:
+        maxTemp = points[x].temp
+
+def generatePoint(x, y, z, temp):
     # generate plane with RGBA data values all set to 1.
-    hfy = 0.5 + ((sin(x * 4)) * cos(z) * cos(x)) / 2
-    r = 0.5 + (sin(x / 4) + cos(z / 4)) / 2
-    g = (hfy + r) / 2
-    b = 1 - r
+    r = temp/maxTemp
+    g = 0.0
+    b = (maxTemp - temp)/maxTemp
     return struct.pack('ddddddd', x, y, z, r, g, b, 1.0)
 
 
@@ -70,7 +74,8 @@ def outputBlock(x, z):
         px = points[fx].x
         py = points[fx].y
         pz = points[fx].z
-        dataBytes = generatePoint(px, py, pz)
+        temp = points[fx].temp
+        dataBytes = generatePoint(px, py, pz, temp)
         file.write(dataBytes)
 
 # generate and output line by line
