@@ -13,6 +13,7 @@ density = 500
 # output file name
 filename1 = "data.xyzb"
 filename2 = "data2.xyzb"
+csvfile = "data.csv"
 
 
 class Point(object):
@@ -35,10 +36,13 @@ import time
 
 file = open(filename1, 'wb')
 file2 = open(filename2, 'wb')
+file3 = open(csvfile, 'wb')
 fileread = open("particle00027.vtk", 'r')
 points = []
 maxTemp = 0
 maxVel = 0
+
+file3.write("x,y,z,temp,velx,vely,velz,vel\n")
 
 for x in range(1, 960450):
     temp = fileread.readline()
@@ -69,6 +73,9 @@ for x in range(0, len(points)):
         maxTemp = points[x].temp
     if points[x].velx > maxVel:
         maxVel = points[x].velx
+    file3.write("\"" + str(points[x].x) + "\",\"" + str(points[x].y) + "\",\"" + str(points[x].z) + "\",\"" + str(points[x].temp) +
+                "\",\"" + str(points[x].velx) + "\",\"" + str(points[x].vely) + "\",\"" + str(points[x].velz) + "\",\"" +
+                str(points[x].vel) + "\"\n")
 
 def generatePoint1(x, y, z, temp):
     # generate plane with RGBA data values all set to 1.
