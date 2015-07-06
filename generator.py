@@ -74,8 +74,8 @@ for x in range(0, len(points)):
     if points[x].velx > maxVel:
         maxVel = points[x].velx
     file3.write("\"" + str(points[x].x) + "\",\"" + str(points[x].y) + "\",\"" + str(points[x].z) + "\",\"" + str(points[x].temp) +
-                "\",\"" + str(points[x].velx) + "\",\"" + str(points[x].vely) + "\",\"" + str(points[x].velz) + "\",\"" +
-                str(points[x].vel) + "\"\n")
+                "\",\"" + str(format(points[x].velx, '.16f')) + "\",\"" + str(format(points[x].vely, '.16f')) + "\",\"" +
+                str(format(points[x].velz, '.16f')) + "\",\"" + str(format(points[x].vel, '.16f')) + "\"\n")
 
 def generatePoint1(x, y, z, temp):
     # generate plane with RGBA data values all set to 1.
