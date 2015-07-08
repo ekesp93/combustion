@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+	<head>
+		<title>Combustion Data</title>
+		<script type="text/javascript" src="d3/d3.v3.min.js"></script>
+	</head>
+	<style>
+		.line {
+			stroke: black;
+		}
+	</style>
+	<body>
+		<svg class="chart"></svg>
+		<script>
+			/*
+				Set up variables for the chart instantiation.
+			*/
+			// Margins and size for the chart.
+			var margin = { top: 30, bottom: 10, left: 20, right: 20 },
+				width = 1060 - margin.left - margin.right,
+				height = 650 - margin.top - margin.bottom;
+    			
+    		// Create the chart.
+    		var chart = d3.selectAll(".chart")
+				.attr("width", width + margin.left + margin.right)
+				.attr("height", height + margin.top + margin.bottom)
+			  .append("g")
+			  	.attr("transform", "translate(" + margin.left + "," + margin.top +")");
+			  	
+			/* 
+				Set up scales and other various elements of the graph.
+			*/
+			// Scales
+			var tempScale = d3.scale.linear()
+				.range([height, 0]);
+				
+			var velScale = d3.scale.linear()
+				.range([height, 0]);
+			  	
+			/* 
+				Pull in data and create graph points.
+			*/
+			d3.csv("data.csv", function(data) {
+			
+				// Set domains for scales.
+				tempScale.domain([d3.min(data, function(d) { return d.temp; }), 
+								  d3.max(data, function(d) { return d.temp; })]);
+				velScale.domain([d3.min(data, function(d) { return d.vel; }), 
+								 d3.max(data, function(d) { return d.vel; })]);
+								 
+				console.log(d3.min(data, function(d) { return d.vel; }));
+				console.log(d3.max(data, function(d) { return d.vel; }));
+								
+				// Draw lines
+				chart.selectAll(".line")
+					.data(data)
+					.enter()
+				  .append("line")
+				  	.attr("class", "line")
+				  	.attr("x1", 0)
+				  	.attr("y1", function(d) { return tempScale(d.temp); })
+				  	.attr("x2", width)
+				  	.attr("y2", function(d) { return velScale(d.vel); });
+				  	
+				chart.append("line")
+					.attr("x1", width)
+					.attr("y1", 0)
+					.attr("x2", width)
+					.attr("y2", height)
+					.style("stroke", "red");
+			});
+		</script>
+	</body>
+</html>
