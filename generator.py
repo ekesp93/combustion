@@ -14,6 +14,7 @@ density = 500
 filename1 = "data.xyzb"
 filename2 = "data2.xyzb"
 csvfile = "data.csv"
+pltfile = "data3.xyzb"
 
 
 class Point(object):
@@ -27,6 +28,31 @@ class Point(object):
         self.velz = velz
         self.vel = vel
 
+class Spot(object):
+    def __init__(self, x, y, z, p, u, v, w, rho, T, S1, S2, S3, S4, S5, pCount, react, nu_t, nu_x, nu_y, nu_z, EV, NUT):
+        self.x = x
+        self.y = y
+        self.z = z
+        self.p = p
+        self.u = u
+        self.v = v
+        self.w = w
+        self.rho = rho
+        self.T = T
+        self.S1 = S1
+        self.S2 = S2
+        self.S3 = S3
+        self.S4 = S4
+        self.S5 = S5
+        self.pCount = pCount
+        self.react = react
+        self.nu_t = nu_t
+        self.nu_x = nu_x
+        self.nu_y = nu_y
+        self.nu_z = nu_z
+        self.EV = EV
+        self.NUT = NUT
+
 # -------------------------------------------------------------------------------
 # CODE
 import struct
@@ -37,8 +63,11 @@ import time
 file = open(filename1, 'wb')
 file2 = open(filename2, 'wb')
 file3 = open(csvfile, 'wb')
+file4 = open(pltfile, 'wb')
 fileread = open("particle00027.vtk", 'r')
+pltread = open("movie0028.plt", 'r')
 points = []
+plt = []
 maxTemp = 0
 maxVel = 0
 
@@ -76,6 +105,75 @@ for x in range(0, len(points)):
     file3.write("\"" + str(points[x].x) + "\",\"" + str(points[x].y) + "\",\"" + str(points[x].z) + "\",\"" + str(points[x].temp) +
                 "\",\"" + str(format(points[x].velx, '.16f')) + "\",\"" + str(format(points[x].vely, '.16f')) + "\",\"" +
                 str(format(points[x].velz, '.16f')) + "\",\"" + str(format(points[x].vel, '.16f')) + "\"\n")
+
+for x in range(1, 38604):
+    temp = pltread.readline()
+    if x > 3:
+        temp = temp.strip('\n')
+        parsed = temp.split(" ")
+        if len(parsed) != 1 and parsed[2] != 'ZONE':
+            insert = Spot(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+            k = 0
+            for y in range(0, len(parsed)):
+                if parsed[y] != '':
+                    if k == 0:
+                        insert.x = float(parsed[y])
+                    elif k == 1:
+                        insert.y = float(parsed[y])
+                    elif k == 2:
+                        insert.z = float(parsed[y])
+                    elif k == 3:
+                        insert.p = float(parsed[y])
+                    elif k == 4:
+                        insert.u = float(parsed[y])
+                    elif k == 5:
+                        insert.v = float(parsed[y])
+                    elif k == 6:
+                        insert.w = float(parsed[y])
+                    elif k == 7:
+                        insert.rho = float(parsed[y])
+                    elif k == 8:
+                        insert.T = float(parsed[y])
+                    k += 1
+            temp = pltread.readline()
+            temp = temp.strip('\n')
+            parsed = temp.split(" ")
+            for y in range(0, len(parsed)):
+                if parsed[y] != '':
+                    if k == 9:
+                        insert.S1 = float(parsed[y])
+                    elif k == 10:
+                        insert.S2 = float(parsed[y])
+                    elif k == 11:
+                        insert.S3 = float(parsed[y])
+                    elif k == 12:
+                        insert.S4 = float(parsed[y])
+                    elif k == 13:
+                        insert.S5 = float(parsed[y])
+                    elif k == 14:
+                        insert.pCount = float(parsed[y])
+                    elif k == 15:
+                        insert.react = float(parsed[y])
+                    elif k == 16:
+                        insert.nu_t = float(parsed[y])
+                    elif k == 17:
+                        insert.nu_x = float(parsed[y])
+                    k += 1
+            temp = pltread.readline()
+            temp = temp.strip('\n')
+            parsed = temp.split(" ")
+            for y in range(0, len(parsed)):
+                if parsed[y] != '':
+                    if k == 18:
+                        insert.nu_y = float(parsed[y])
+                    elif k == 19:
+                        insert.nu_z = float(parsed[y])
+                    elif k == 20:
+                        insert.EV = float(parsed[y])
+                    elif k == 21:
+                        insert.NUT = float(parsed[y])
+                    k += 1
+            plt.append(insert)
 
 def generatePoint1(x, y, z, temp):
     # generate plane with RGBA data values all set to 1.
