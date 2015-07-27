@@ -65,3 +65,20 @@ getDefaultCamera().lookAt(pointCloud.getBoundCenter(), Vector3(0,1,0))
 
 #pressure.setPosition(0, 25, 35)
 #pressure.lookAt(pointCloud2.getBoundCenter(), Vector3(0,1,0))
+def onUpdate(frame, time, dt):
+    mcc = getMissionControlClient()
+        cp = getDefaultCamera().getPosition()
+        cp[2]= -1 * cp[2]
+        cp[1]= -1 * cp[1]
+        cp[0]= -1 * cp[0]
+        mcc.postCommand('getDefaultCamera().setPosition({0},{1},{2})'.format(cp[0],cp[1],cp[2]))
+
+def setup(server):
+    dc = getDisplayConfig()
+        mcc = getMissionControlClient()
+        if(server):
+            dc.setCanvasRect((0,0,12000,3000))
+                setUpdateFunction(onUpdate)
+        else:
+            dc.setCanvasRect((12500,0,12000,3000))
+                getDefaultCamera().setControllerEnabled(False)

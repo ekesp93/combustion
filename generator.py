@@ -70,6 +70,7 @@ points = []
 plt = []
 maxTemp = 0
 maxVel = 0
+maxP = 0
 
 file3.write("x,y,z,temp,velx,vely,velz,vel\n")
 
@@ -175,6 +176,10 @@ for x in range(1, 38604):
                     k += 1
             plt.append(insert)
 
+for x in range(0, len(plt)):
+    if plt[x].p > maxP:
+        maxP = plt[x].p
+
 def generatePoint1(x, y, z, temp):
     # generate plane with RGBA data values all set to 1.
     r = temp/maxTemp
@@ -188,6 +193,12 @@ def generatePoint2(x, y, z, vel):
     b = 0.0
     return struct.pack('ddddddd', x, y, z, r, g, b, 1.0)
 
+def generatePoint3(x, y, z, p):
+    r = 0.0
+    g = p/maxP
+    b = (maxP - p)/maxP
+    return struct.pack('ddddddd', x, y, z, r, g, b, 1.0)
+
 def outputBlock(x, z):
     for fx in range(0, len(points)):
         px = points[fx].x
@@ -199,6 +210,13 @@ def outputBlock(x, z):
         file.write(dataBytes)
         dataBytes = generatePoint2(px, py, pz, vel)
         file2.write(dataBytes)
+    for fx in range(0, len(plt)):
+        px = plt[fx].x
+        py = plt[fx].y
+        pz = plt[fx].z
+        p = plt[fx].p
+        dataBytes = generatePoint3(px, py, pz, p)
+        file4.write(dataBytes)
 
 # generate and output line by line
 for x in range(0, extx):

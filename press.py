@@ -19,7 +19,7 @@ pointScale.setFloat(0.1)
 
 pointCloudModel = ModelInfo()
 pointCloudModel.name = 'pointCloud'
-pointCloudModel.path = 'data.xyzb'
+pointCloudModel.path = 'data3.xyzb'
 ##################################################
 #pointCloudModel.options = "10000 100:1000000:5 20:100:4 6:20:2 0:5:1"
 pointCloudModel.options = "10000 100:1000000:20 20:100:10 6:20:5 0:5:5"
@@ -29,7 +29,7 @@ pointCloudModel.options = "10000 100:1000000:20 20:100:10 6:20:5 0:5:5"
 scene.loadModel(pointCloudModel)
 
 pointCloud = StaticObject.create(pointCloudModel.name)
-pointCloud.setPosition(-15, -2, -5)
+pointCloud.setPosition(-15, 2, -5)
 pointCloud.setScale(30, 100, 100)
 
 # attach shader uniforms
