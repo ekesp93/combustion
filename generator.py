@@ -18,11 +18,19 @@ pltfile = "data3.xyzb"
 
 
 class Point(object):
-    def __init__(self, x, y, z, temp, velx, vely, velz, vel):
+    def __init__(self, x, y, z, temp, nu, omega, S1, S2, S3, S4, S5, weight, velx, vely, velz, vel):
         self.x = x
         self.y = y
         self.z = z
         self.temp = temp
+        self.nu = nu
+        self.omega = omega
+        self.S1 = S1
+        self.S2 = S2
+        self.S3 = S3
+        self.S4 = S4
+        self.S5 = S5
+        self.weight = weight
         self.velx = velx
         self.vely = vely
         self.velz = velz
@@ -57,46 +65,111 @@ class Spot(object):
 # CODE
 import struct
 from random import *
-from math import *
+import math
 import time
 
 file = open(filename1, 'wb')
 file2 = open(filename2, 'wb')
 file3 = open(csvfile, 'wb')
 file4 = open(pltfile, 'wb')
-fileread = open("particle00027.vtk", 'r')
+fileread = open("particle00007.vtk", 'r')
 pltread = open("movie0028.plt", 'r')
 points = []
 plt = []
 maxTemp = 0
 maxVel = 0
 maxP = 0
+maxCount = 0
+count = 0
 
 file3.write("x,y,z,temp,velx,vely,velz,vel\n")
 
-for x in range(1, 960450):
+i = 0
+for x in range(1,10):
     temp = fileread.readline()
-    if x > 9 and x < 68610:
+    if x == 9:
         parsed = temp.split(" ")
-        points.append(Point(float(parsed[6]), float(parsed[12]), float(parsed[18]), 0.0, 0.0, 0.0, 0.0, 0.0))
-    elif x > 68613 and x < 137214:
-        parsed = temp.split(" ")
-        points[x - 68614].temp = float(parsed[6])
-    elif x > 891848 and x < 960449:
-        parsed = temp.split(" ")
+        maxCount = int(parsed[4])
+for x in range(10, maxCount * 11):
+    temp = fileread.readline()
+    parsed = temp.split(" ")
+    if i == 0: # X Y Z coordinates
+        points.append(Point(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
         k = 0
         for y in range(0, len(parsed)):
             if parsed[y] != '':
                 if k == 0:
-                    points[x - 891849].velx = float(parsed[y])
+                    points[count].x = float(parsed[y])
                 elif k == 1:
-                    points[x - 891849].vely = float(parsed[y])
+                    points[count].y = float(parsed[y])
                 elif k == 2:
-                    points[x - 891849].velz = float(parsed[y])
+                    points[count].z = float(parsed[y])
                 k += 1
-                points[x - 891849].vel = math.sqrt(math.pow(points[x - 891849].velx, 2) +
-                                                math.pow(points[x - 891849].vely, 2) +
-                                                math.pow(points[x - 891849].velz, 2))
+        count += 1
+    elif i == 1 and parsed[0] == '': # Temperature
+        for y in range(0, len(parsed)):
+            if parsed[y] != '':
+                points[count].temp = float(parsed[y])
+        count += 1
+    elif i == 2 and parsed[0] == '': # nu_t
+        for y in range(0, len(parsed)):
+            if parsed[y] != '':
+                points[count].nu = float(parsed[y])
+        count += 1
+    elif i == 3 and parsed[0] == '': # Omega
+        for y in range(0, len(parsed)):
+            if parsed[y] != '':
+                points[count].omega = float(parsed[y])
+        count += 1
+    elif i == 4 and parsed[0] == '': # Scalar 1
+        for y in range(0, len(parsed)):
+            if parsed[y] != '':
+                points[count].S1 = float(parsed[y])
+        count += 1
+    elif i == 5 and parsed[0] == '': # Scalar 2
+        for y in range(0, len(parsed)):
+            if parsed[y] != '':
+                points[count].S2 = float(parsed[y])
+        count += 1
+    elif i == 6 and parsed[0] == '': # Scalar 3
+        for y in range(0, len(parsed)):
+            if parsed[y] != '':
+                points[count].S3 = float(parsed[y])
+        count += 1
+    elif i == 7 and parsed[0] == '': # Scalar 4
+        for y in range(0, len(parsed)):
+            if parsed[y] != '':
+                points[count].S4 = float(parsed[y])
+        count += 1
+    elif i == 8 and parsed[0] == '': # Scalar 5
+        for y in range(0, len(parsed)):
+            if parsed[y] != '':
+                points[count].S5 = float(parsed[y])
+        count += 1
+    elif i == 9 and parsed[0] == '': # Weight
+        for y in range(0, len(parsed)):
+            if parsed[y] != '':
+                points[count].weight = float(parsed[y])
+        count += 1
+    elif i == 10 and parsed[0] == '': # Velocity
+        k = 0
+        for y in range(0, len(parsed)):
+            if parsed[y] != '':
+                if k == 0:
+                    points[count].velx = float(parsed[y])
+                elif k == 1:
+                    points[count].vely = float(parsed[y])
+                elif k == 2:
+                    points[count].velz = float(parsed[y])
+                k += 1
+                points[count].vel = math.sqrt(math.pow(points[count].velx, 2) +
+                                              math.pow(points[count].vely, 2) +
+                                              math.pow(points[count].velz, 2))
+        count += 1
+    if count == maxCount:
+        i += 1
+        count = 0
+        temp = fileread.readline()
 
 for x in range(0, len(points)):
     if points[x].temp > maxTemp:
@@ -194,9 +267,9 @@ def generatePoint2(x, y, z, vel):
     return struct.pack('ddddddd', x, y, z, r, g, b, 1.0)
 
 def generatePoint3(x, y, z, p):
-    r = 0.0
-    g = p/maxP
-    b = (maxP - p)/maxP
+    r = p/maxP
+    g = (maxP - p)/maxP
+    b = 0.0
     return struct.pack('ddddddd', x, y, z, r, g, b, 1.0)
 
 def outputBlock(x, z):
