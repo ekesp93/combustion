@@ -18,7 +18,7 @@ pltfile = "data3.xyzb"
 
 
 class Point(object):
-    def __init__(self, x, y, z, temp, nu, omega, S1, S2, S3, S4, S5, weight, velx, vely, velz, vel):
+    def __init__(self, x, y, z, temp, nu, omega, S1, S2, S3, S4, S5, weight, nu_x, nu_y, nu_z, velx, vely, velz, vel):
         self.x = x
         self.y = y
         self.z = z
@@ -31,6 +31,9 @@ class Point(object):
         self.S4 = S4
         self.S5 = S5
         self.weight = weight
+        self.nu_x = nu_x
+        self.nu_y = nu_y
+        self.nu_z = nu_z
         self.velx = velx
         self.vely = vely
         self.velz = velz
@@ -89,12 +92,14 @@ for x in range(1,10):
     temp = fileread.readline()
     if x == 9:
         parsed = temp.split(" ")
-        maxCount = int(parsed[4])
-for x in range(10, maxCount * 11):
+        for y in range(0, len(parsed)):
+            if parsed[y] != '' and parsed[y] != 'POINTS' and parsed[y] != 'float\n':
+                maxCount = int(parsed[y])
+for x in range(10, maxCount * 14):
     temp = fileread.readline()
     parsed = temp.split(" ")
     if i == 0: # X Y Z coordinates
-        points.append(Point(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
+        points.append(Point(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
         k = 0
         for y in range(0, len(parsed)):
             if parsed[y] != '':
@@ -151,7 +156,22 @@ for x in range(10, maxCount * 11):
             if parsed[y] != '':
                 points[count].weight = float(parsed[y])
         count += 1
-    elif i == 10 and parsed[0] == '': # Velocity
+    elif i == 10 and parsed[0] == '': # nu_x
+        for y in range(0, len(parsed)):
+            if parsed[y] != '':
+                points[count].nu_x = float(parsed[y])
+        count += 1
+    elif i == 11 and parsed[0] == '': # nu_y
+        for y in range(0, len(parsed)):
+            if parsed[y] != '':
+                points[count].nu_y = float(parsed[y])
+        count += 1
+    elif i == 12 and parsed[0] == '': # nu_z
+        for y in range(0, len(parsed)):
+            if parsed[y] != '':
+                points[count].nu_z = float(parsed[y])
+        count += 1
+    elif i == 13 and parsed[0] == '': # Velocity
         k = 0
         for y in range(0, len(parsed)):
             if parsed[y] != '':
@@ -174,8 +194,8 @@ for x in range(10, maxCount * 11):
 for x in range(0, len(points)):
     if points[x].temp > maxTemp:
         maxTemp = points[x].temp
-    if points[x].velx > maxVel:
-        maxVel = points[x].velx
+    if points[x].vel > maxVel:
+        maxVel = points[x].vel
     file3.write("\"" + str(points[x].x) + "\",\"" + str(points[x].y) + "\",\"" + str(points[x].z) + "\",\"" + str(points[x].temp) +
                 "\",\"" + str(format(points[x].velx, '.16f')) + "\",\"" + str(format(points[x].vely, '.16f')) + "\",\"" +
                 str(format(points[x].velz, '.16f')) + "\",\"" + str(format(points[x].vel, '.16f')) + "\"\n")
