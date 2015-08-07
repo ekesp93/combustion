@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+	<head>
+		<script type="text/javascript" src="d3/d3.v3.js"></script>
+		<title>Combustion Particles</title>
+	</head>
+	<style>
+		.tooltip {
+			position: absolute;           
+  			text-align: center;                           
+  			padding: 2px;             
+  			font: 12px sans-serif;        
+  			background: #C9EEBE;   
+  			border: 0px;      
+  			border-radius: 8px;           
+  			pointer-events: none;  
+  			display: inline-block; 
+		}
+	</style>
+	<body>
+		<script>
+			var level1 = [ { z: 0 } ], level2 = [ { z: 0 } ], level3 = [ { z: 0 } ], level4 = [ { z: 0 } ],
+				level5 = [ { z: 0 } ], level6 = [ { z: 0 } ], level7 = [ { z: 0 } ];
+		
+			/* Create the SVG that will become the model */
+			var width = 4800,
+				height = 600;
+				
+			var svg = d3.select("body").append("svg")
+    			.attr("width", width)
+    			.attr("height", height);
+    			
+    		/* Scales */
+    		var xScale = d3.scale.linear()
+    			.range([45, width - 5]);
+    			
+    		var yScale = d3.scale.linear()
+    			.range([height - 200, 150]);
+    			
+    		var zScale = d3.scale.linear()
+    			.range([40, 0]);
+    			
+    		var tooltip = d3.select("body").append("div")   
+    			.attr("class", "tooltip")               
+    			.style("opacity", 0);
+    			
+    		/* Pull data */
+    		d3.csv("data.csv", function(data) {
+    			/* Set up scale input */
+    			xScale.domain([d3.min(data, function(d) { return d.x; }),
+    						   d3.max(data, function(d) { return d.x; })]);
+    			yScale.domain([d3.min(data, function(d) { return d.y; }),
+    						   d3.max(data, function(d) { return d.y; })]);
+    			zScale.domain([d3.min(data, function(d) { return d.z; }),
+    						   d3.max(data, function(d) { return d.z; })]);
+    					
+    			/* Get each level of z */	   
+    			var k = 0
+    			for (var x = 0; x < data.length; x++) {
+    				if (data[x].z == level1[0].z) {
+    					level1.push(data[x]);
+    				}
+    				else if (data[x].z == level2[0].z) {
+    					level2.push(data[x]);
+    				}
+    				else if (data[x].z == level3[0].z) {
+    					level3.push(data[x]);
+    				}
+    				else if (data[x].z == level4[0].z) {
+    					level4.push(data[x]);
+    				}
+    				else if (data[x].z == level5[0].z) {
+    					level5.push(data[x]);
+    				}
+    				else if (data[x].z == level6[0].z) {
+    					level6.push(data[x]);
+    				}
+    				else if (data[x].z == level7[0].z) {
+    					level7.push(data[x]);
+    				}
+    				else if (level1[0].z == 0) {
+    					level1[0].z = data[x].z;
+    					level1.push(data[x]);
+    				}
+    				else if (level2[0].z == 0) {
+    					level2[0].z = data[x].z;
+    					level2.push(data[x]);
+    				}
+    				else if (level3[0].z == 0) {
+    					level3[0].z = data[x].z;
+    					level3.push(data[x]);
+    				}
+    				else if (level4[0].z == 0) {
+    					level4[0].z = data[x].z;
+    					level4.push(data[x]);
+    				}
+    				else if (level5[0].z == 0) {
+    					level5[0].z = data[x].z;
+    					level5.push(data[x]);
+    				}
+    				else if (level6[0].z == 0) {
+    					level6[0].z = data[x].z;
+    					level6.push(data[x]);
+    				}
+    				else if (level7[0].z == 0) {
+    					level7[0].z = data[x].z;
+    					level7.push(data[x]);
+    				}
+    			}
+    					
+    			console.log(level1[0].z);	 
+    			console.log(level2[0].z);
+    			console.log(level3[0].z);
+    			console.log(level4[0].z);
+    			console.log(level5[0].z);
+    			console.log(level6[0].z);
+    			console.log(level7[0].z);  
+    			/* Draw circles */
+    			svg.selectAll(".particle")
+    				.data(data)
+    				.enter()
+    			  .append("circle")
+    			  	.attr("class", "particle")
+    			  	.attr("r", 2)
+    			  	.attr("cx", function(d) { return xScale(d.x) - zScale(d.z); })
+    			  	.attr("cy", function(d) { return yScale(d.y) + zScale(d.z); })
+    			  	.attr("stroke", "#1D520D")
+    			  	.attr("stroke-width", 0.2)
+    			  	.style("fill", function(d) {
+    					if (d.z == level1[0].z) {
+    						return "#53EB25";
+    					}
+    					else {
+    						return "#DADBD9";
+    					}	
+    				})
+    			  	.style("opacity", function(d) { return zScale(d.z) / 40; })
+    			  	.on("mouseover", function(d) {
+    			  		d3.select(this)
+    			  			.attr("r", 5)
+    			  			.attr("stroke-width", 1);
+    			  		tooltip.transition()        
+                			.duration(100)      
+                			.style("opacity", .9);      
+            			tooltip.html("<b>X:</b> " + d.x + "<br><b>Y:</b> " + d.y + "<br><b>Z:</b> " +
+            						 d.z)  
+                			.style("left", (d3.event.pageX) + "px")     
+                			.style("top", (d3.event.pageY - 28) + "px"); 
+    			  	})
+    			  	.on("mouseout", function(d) {
+    			  		d3.select(this)
+    			  			.attr("r", 2)
+    			  			.attr("stroke-width", 0.2);
+    			  		tooltip.transition()        
+                			.duration(100)      
+                			.style("opacity", 0);
+    			  	});
+    		});
+		</script>
+	</body>
+</html>
