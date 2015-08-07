@@ -275,21 +275,21 @@ for x in range(0, len(plt)):
 
 def generatePoint1(x, y, z, temp):
     # generate plane with RGBA data values all set to 1.
-    r = temp/maxTemp
-    g = 0.0
+    r = 1.0
+    g = (maxTemp - temp)/maxTemp
     b = (maxTemp - temp)/maxTemp
     return struct.pack('ddddddd', x, y, z, r, g, b, 1.0)
 
 def generatePoint2(x, y, z, vel):
-    r = vel/maxVel
-    g = (maxVel - vel)/maxVel
-    b = 0.0
+    r = (maxVel - vel)/maxVel
+    g = 1.0
+    b = (maxVel - vel)/maxVel
     return struct.pack('ddddddd', x, y, z, r, g, b, 1.0)
 
 def generatePoint3(x, y, z, p):
-    r = p/maxP
+    r = (maxP - p)/maxP
     g = (maxP - p)/maxP
-    b = 0.0
+    b = 1.0
     return struct.pack('ddddddd', x, y, z, r, g, b, 1.0)
 
 def outputBlock(x, z):
